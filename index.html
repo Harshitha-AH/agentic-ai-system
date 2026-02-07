@@ -5,83 +5,98 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
+            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
+            color: white;
             padding: 40px;
         }
+
         h1 {
-            color: #2c3e50;
+            text-align: center;
+            font-size: 40px;
         }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+        }
+
         textarea {
             width: 100%;
-            padding: 10px;
-            font-size: 16px;
-        }
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            margin-top: 10px;
-            background-color: #2c3e50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        .section {
-            margin-top: 25px;
             padding: 15px;
-            background: white;
+            font-size: 16px;
             border-radius: 8px;
-            box-shadow: 0px 2px 5px rgba(0,0,0,0.1);
+            border: none;
+            margin-top: 20px;
+        }
+
+        button {
+            padding: 12px 25px;
+            font-size: 16px;
+            margin-top: 15px;
+            background-color: #00c6ff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #0072ff;
+        }
+
+        .output {
+            margin-top: 30px;
+            background-color: rgba(255,255,255,0.1);
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .agent {
+            margin-bottom: 15px;
+        }
+
+        .highlight {
+            color: #00ffd5;
+            font-weight: bold;
         }
     </style>
 </head>
+
 <body>
 
-<h1>Agentic AI System</h1>
-<p>Autonomous Research & Article Generation Demo</p>
+<div class="container">
+    <h1>🧠 Agentic AI Research System</h1>
+    <p>Autonomous Multi-Agent Research & Article Generation Prototype</p>
 
-<textarea id="topic" rows="3" placeholder="Enter a topic..."></textarea>
-<br>
-<button onclick="generateArticle()">Generate Article</button>
+    <textarea id="topic" placeholder="Enter a research topic..."></textarea>
+    <button onclick="generate()">Generate Research Article</button>
 
-<div id="output"></div>
+    <div class="output" id="output"></div>
+</div>
 
 <script>
-function generateArticle() {
+function generate() {
     let topic = document.getElementById("topic").value;
+    let output = document.getElementById("output");
 
-    if(topic === "") {
-        alert("Please enter a topic");
+    if(topic.trim() === "") {
+        output.innerHTML = "⚠️ Please enter a topic.";
         return;
     }
 
-    let output = `
-    <div class="section">
-        <h2>🔍 Research Agent</h2>
-        <p>Gathering information about <b>${topic}</b> from multiple domains including academic, technical, and practical perspectives.</p>
-    </div>
-
-    <div class="section">
-        <h2>🧠 Reasoning Agent</h2>
-        <p>Analyzing relationships, identifying key concepts, and structuring logical flow of ideas for the topic ${topic}.</p>
-    </div>
-
-    <div class="section">
-        <h2>✍ Writing Agent</h2>
-        <p>This article explores ${topic} by combining insights from various research sources. It highlights core principles, applications, and future potential.</p>
-    </div>
-
-    <div class="section">
-        <h2>🔁 Review Agent</h2>
-        <p>The draft has been refined for clarity, coherence, and completeness using iterative reasoning.</p>
-    </div>
-
-    <div class="section">
-        <h2>🧠 Memory Agent</h2>
-        <p>Storing improvements and feedback for future enhancement of research outputs.</p>
-    </div>
+    output.innerHTML = `
+    <div class="agent"><span class="highlight">🔍 Research Agent:</span> Gathering information about <b>${topic}</b> from multiple domains...</div>
+    <div class="agent"><span class="highlight">🧠 Reasoning Agent:</span> Structuring knowledge and identifying key insights...</div>
+    <div class="agent"><span class="highlight">✍ Writing Agent:</span> Drafting a coherent and structured article...</div>
+    <div class="agent"><span class="highlight">🔁 Review Agent:</span> Improving clarity, removing redundancy, optimizing structure...</div>
+    <div class="agent"><span class="highlight">🧠 Memory Agent:</span> Storing learned context for future refinement...</div>
+    <hr>
+    <h3>Final Generated Article:</h3>
+    <p><b>${topic}</b> is a rapidly evolving domain impacting multiple industries. 
+    This article explores its background, key challenges, technological advancements, 
+    and future implications. Through iterative reasoning and multi-agent collaboration, 
+    the system refines insights to produce structured, high-quality research output.</p>
     `;
-
-    document.getElementById("output").innerHTML = output;
 }
 </script>
 
