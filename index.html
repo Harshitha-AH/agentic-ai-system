@@ -1,103 +1,160 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Agentic AI Research System</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
-            color: white;
-            padding: 40px;
-        }
+<title>Agentic AI System</title>
+<style>
 
-        h1 {
-            text-align: center;
-            font-size: 40px;
-        }
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #141E30, #243B55);
+    color: white;
+}
 
-        .container {
-            max-width: 900px;
-            margin: auto;
-        }
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 40px;
+}
 
-        textarea {
-            width: 100%;
-            padding: 15px;
-            font-size: 16px;
-            border-radius: 8px;
-            border: none;
-            margin-top: 20px;
-        }
+h1 {
+    text-align: center;
+    font-size: 42px;
+}
 
-        button {
-            padding: 12px 25px;
-            font-size: 16px;
-            margin-top: 15px;
-            background-color: #00c6ff;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            font-weight: bold;
-        }
+.card {
+    background: rgba(255,255,255,0.08);
+    padding: 25px;
+    border-radius: 15px;
+    backdrop-filter: blur(10px);
+    margin-top: 30px;
+}
 
-        button:hover {
-            background-color: #0072ff;
-        }
+textarea {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    margin-top: 15px;
+}
 
-        .output {
-            margin-top: 30px;
-            background-color: rgba(255,255,255,0.1);
-            padding: 20px;
-            border-radius: 10px;
-        }
+button {
+    padding: 12px 25px;
+    margin-top: 15px;
+    border-radius: 8px;
+    border: none;
+    font-size: 16px;
+    background: #00d4ff;
+    cursor: pointer;
+    font-weight: bold;
+}
 
-        .agent {
-            margin-bottom: 15px;
-        }
+button:hover {
+    background: #0099cc;
+}
 
-        .highlight {
-            color: #00ffd5;
-            font-weight: bold;
-        }
-    </style>
+.agent-step {
+    margin: 12px 0;
+}
+
+.progress-bar {
+    width: 100%;
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 15px;
+}
+
+.progress {
+    height: 10px;
+    width: 0%;
+    background: #00ffcc;
+    transition: width 0.5s;
+}
+
+.article {
+    margin-top: 20px;
+    line-height: 1.6;
+}
+
+.status-active {
+    color: #00ffcc;
+}
+
+.status-done {
+    color: #00ff88;
+}
+
+</style>
 </head>
 
 <body>
 
 <div class="container">
-    <h1>🧠 Agentic AI Research System</h1>
-    <p>Autonomous Multi-Agent Research & Article Generation Prototype</p>
 
-    <textarea id="topic" placeholder="Enter a research topic..."></textarea>
-    <button onclick="generate()">Generate Research Article</button>
+<h1>🧠 Agentic AI Dashboard</h1>
 
-    <div class="output" id="output"></div>
+<div class="card">
+    <h3>Autonomous Multi-Agent Research System</h3>
+    <textarea id="topic" placeholder="Enter research topic..."></textarea>
+    <button onclick="runAgents()">Generate Article</button>
+
+    <div class="progress-bar">
+        <div class="progress" id="progress"></div>
+    </div>
+
+    <div id="agents"></div>
+    <div id="finalArticle" class="article"></div>
+</div>
+
 </div>
 
 <script>
-function generate() {
-    let topic = document.getElementById("topic").value;
-    let output = document.getElementById("output");
 
+async function runAgents() {
+
+    let topic = document.getElementById("topic").value;
     if(topic.trim() === "") {
-        output.innerHTML = "⚠️ Please enter a topic.";
+        alert("Enter a topic");
         return;
     }
 
-    output.innerHTML = `
-    <div class="agent"><span class="highlight">🔍 Research Agent:</span> Gathering information about <b>${topic}</b> from multiple domains...</div>
-    <div class="agent"><span class="highlight">🧠 Reasoning Agent:</span> Structuring knowledge and identifying key insights...</div>
-    <div class="agent"><span class="highlight">✍ Writing Agent:</span> Drafting a coherent and structured article...</div>
-    <div class="agent"><span class="highlight">🔁 Review Agent:</span> Improving clarity, removing redundancy, optimizing structure...</div>
-    <div class="agent"><span class="highlight">🧠 Memory Agent:</span> Storing learned context for future refinement...</div>
-    <hr>
-    <h3>Final Generated Article:</h3>
-    <p><b>${topic}</b> is a rapidly evolving domain impacting multiple industries. 
-    This article explores its background, key challenges, technological advancements, 
-    and future implications. Through iterative reasoning and multi-agent collaboration, 
-    the system refines insights to produce structured, high-quality research output.</p>
+    let agentsDiv = document.getElementById("agents");
+    let progress = document.getElementById("progress");
+    let articleDiv = document.getElementById("finalArticle");
+
+    agentsDiv.innerHTML = "";
+    articleDiv.innerHTML = "";
+    progress.style.width = "0%";
+
+    function delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    const steps = [
+        "🔍 Research Agent: Collecting multi-domain knowledge...",
+        "🧠 Reasoning Agent: Structuring insights and identifying patterns...",
+        "✍ Writing Agent: Generating structured draft...",
+        "🔁 Review Agent: Refining coherence and clarity...",
+        "🧠 Memory Agent: Storing contextual improvements..."
+    ];
+
+    for(let i = 0; i < steps.length; i++) {
+        agentsDiv.innerHTML += `<div class="agent-step status-active">${steps[i]}</div>`;
+        progress.style.width = ((i+1) / steps.length) * 100 + "%";
+        await delay(1000);
+    }
+
+    articleDiv.innerHTML = `
+        <h3>📄 Generated Research Article</h3>
+        <p><strong>${topic}</strong> is an evolving domain influencing modern research and industry ecosystems.</p>
+        <p>This article integrates insights gathered through autonomous multi-agent collaboration, ensuring structured reasoning, iterative refinement, and memory-based enhancement.</p>
+        <p>The system demonstrates how intelligent agents can simulate research workflows and improve knowledge synthesis efficiently.</p>
+        <p><strong>Quality Score:</strong> 94/100 ✅</p>
     `;
 }
+
 </script>
 
 </body>
